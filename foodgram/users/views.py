@@ -25,3 +25,7 @@ def logout_view(request):
     """Log out view."""
     logout(request)
     return redirect('login')
+
+def signup_view(request):
+    """Sign-up view"""
+    return render(request, 'users/signup.html')
