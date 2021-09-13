@@ -1,8 +1,8 @@
-"""Platzigram views"""
+"""Foodgram views"""
 
 import json
 #Django 
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from datetime import date, datetime #Utilities
 
 def hello_world(request):
@@ -25,5 +25,5 @@ def say_hi(request, name, age):
     if age<12:
         message = f"Sorry {name}, you are not allowd here."
     else:
-        message = f"Hello {name}! Welcome to platzigram."
+        message = f"Hello {name}! Welcome to Foodgram."
     return HttpResponse(message)
