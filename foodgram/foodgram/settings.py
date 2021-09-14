@@ -51,7 +51,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'foodgram.middleware.ProfileCompletionMiddleware',
 ]
 
 ROOT_URLCONF = 'foodgram.urls'
