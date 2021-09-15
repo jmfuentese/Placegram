@@ -18,4 +18,4 @@ class Post(models.Model):
 
     
     def __str__(self):
-        return f'{self.title} by @{self.username}'
+        return f'{self.title} by @{self.user.username}'
