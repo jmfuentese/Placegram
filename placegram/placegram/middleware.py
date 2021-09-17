@@ -1,4 +1,4 @@
-"""Foodgram middleware catalog"""
+"""Placefram middleware catalog"""
 from django.shortcuts import redirect
 from django.urls import reverse
 

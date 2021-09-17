@@ -1,4 +1,4 @@
-from foodgram.settings import LOGIN_URL
+from placegram.settings import LOGIN_URL
 from users.models import Profile
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
