@@ -82,12 +82,15 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },'OPTIONS': {
-    'timeout': 20,
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'placegram',
+        'USER' : 'jmfuentese',
+        'PASSWORD' : '27marco92',
+        'HOST' : '127.0.0.1',
+        'PORT' : '5432',
+    }
 }
-}
+
 
 
 # Password validation
@@ -140,6 +143,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
 LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

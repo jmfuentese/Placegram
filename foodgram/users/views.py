@@ -1,81 +1,71 @@
+from foodgram.settings import LOGIN_URL
+from users.models import Profile
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth import authenticate, login, logout, views as auth_views
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls.base import reverse_lazy
+from django.views.generic import DetailView, FormView, UpdateView
 
-from users.forms import ProfileForm, SignupForm
+from django.contrib.auth.models import User
+
+from users.forms import SignupForm
+from posts.models import Post
 
 
 # Create your views here.
-@login_required
-def update_profile(request):
-    """Update a user's profile view."""  
-    profile = request.user.profile  
 
-    if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            data = form.cleaned_data
-            profile.website = data['website']
-            profile.phone_number = data['phone_number']
-            profile.biography = data['biography']
-            profile.picture = data['picture']
-            profile.save()
+class UserDetailView(LoginRequiredMixin, DetailView):
+    """User detal view"""
+    template_name = 'users/detail.html'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    queryset= User.objects.all()
 
-            return redirect('users:update_profile')
-    else:
-        form = ProfileForm()
-    
-    return render(
-        request=request, 
-        template_name='users/update_profile.html',
-        context={
-            'profile' : profile,
-            'user' : request.user,
-            'form' : form
-        }
-    )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.get_object()
+        context['posts'] = Post.objects.filter(user=user).order_by('-created')
+        return context
 
 
-def login_view(request):
+class SignupView(FormView):
+    """Users sign up view"""
+    template_name = 'users/signup.html'
+    form_class = SignupForm
+    success_url = reverse_lazy('users:login')
+
+    def form_valid(self, form):
+        """Save form data"""
+        form.save()
+        return super().form_valid(form)
+
+
+class UpdateProfileView(LoginRequiredMixin, UpdateView):
+    """Update profile view"""
+    template_name = "users/update_profile.html"
+    model = Profile
+    fields = ['website', 'biography', 'phone_number', 'picture']
+
+    def get_object(self):
+        """Return user's profile"""
+        return self.request.user.profile
+
+    def get_success_url(self):
+        """Return to user's profile"""
+        username = self.object.user.username
+        return reverse('users:detail', kwargs={'username':username})
+
+
+class LoginView(auth_views.LoginView):
     """Login view"""
-
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            return redirect('posts:feed')
-        else:
-            return render(request, 'users/login.html', {'error':'Invalid username or password'})
-    return render(request, 'users/login.html')
+    template_name = 'users/login.html'
+    redirect_authenticated_user=True
 
 
-@login_required
-def logout_view(request):
-    """Log out view."""
-    logout(request)
-    return redirect('users:login')
 
-
-def signup_view(request):
-    """Sign-up view"""
-
-    if request.method == "POST":
-        form = SignupForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            return redirect('users:login')
-    else:
-        form = SignupForm()
-
-
-    return render(
-        request=request, 
-        template_name='users/signup.html',
-        context={'form':form}
-    )
-
+class LogoutView(LoginRequiredMixin, auth_views.LogoutView):
+    """Logout view"""
+    next_page = LOGIN_URL
 
