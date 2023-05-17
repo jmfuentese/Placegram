@@ -1,2 +1,2 @@
 # Foodgram
-A repository for a social media dedicated to food images and recipes made with Django.
+A repository for a social media dedicated to place images and landviews made with Django.
